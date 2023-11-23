@@ -38,10 +38,19 @@ async def on_ready():
 
 @client.command(name='play')
 async def join(ctx, *, song):
-    channel = discord.author.voice.channel
+    try:
+        channel = ctx.author.voice.channel
+    except AttributeError:
+        await ctx.send("You must be in a voice channel to use this command!")
+        return
     if ctx.voice_client is not None:
         return await ctx.voice_client.move_to(channel)
     await channel.connect()
+    #await check_voice_activity(ctx, channel)
+
+async def check_voice_activity(ctx, channel):
+    timeout = 10 * 60 #10 minutes
+    pass
 
 #print(token)
 client.run(token)
