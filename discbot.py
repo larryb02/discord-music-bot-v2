@@ -13,6 +13,13 @@ load_dotenv(file)
 #intents = discord.Intents.default()
 #intents.message_content = True
 
+
+#TODO:
+#inactivity = leave channel
+#flesh out play command, should be play "song", not play "channel"
+#add other functionalities i.e. actually play song, pause, skip
+
+
 token = os.getenv('TOKEN')
 class musicBot(commands.Bot):
 
