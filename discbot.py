@@ -1,19 +1,29 @@
 import discord
 from discord.ext import commands
+
 import os
+
 from dotenv import load_dotenv
 import logging
 
 
-file = 'bot.env'
+file = '../secrets/bot.env'
 load_dotenv(file)
-logging.basicConfig(level=logging.INFO)
-intents = discord.Intents.default()
-intents.message_content = True
-client = commands.Bot(command_prefix='>', intents=intents)
+#logging.basicConfig(level=logging.INFO)
+#intents = discord.Intents.default()
+#intents.message_content = True
 
 token = os.getenv('TOKEN')
+class musicBot(commands.Bot):
 
+    def __init__(self, *, command_prefix='$'):
+        intents = discord.Intents.default()
+        intents.message_content = True
+        super().__init__(command_prefix=command_prefix, intents=intents)
+        #self.tree = app_commands.CommandTree(self)
+
+
+client = musicBot()
 
 @client.event
 async def on_ready():
@@ -24,11 +34,8 @@ async def join(ctx, *, channel: discord.VoiceChannel):
     if ctx.voice_client is not None:
         return await ctx.voice_client.move_to(channel)
     await channel.connect()
-#play <song>
-#stop 
-#skip 
 
-
+#print(token)
 client.run(token)
 
 
