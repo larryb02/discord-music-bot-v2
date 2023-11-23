@@ -16,7 +16,7 @@ load_dotenv(file)
 
 #TODO:
 #inactivity = leave channel
-#flesh out play command, should be play "song", not play "channel"
+#finish play command, probly need some helper functions (get link, stuff like that)
 #add other functionalities i.e. actually play song, pause, skip
 
 
