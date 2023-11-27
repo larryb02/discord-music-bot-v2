@@ -48,10 +48,6 @@ async def join(ctx, *, song):
     #next is call streaming function... need to make
 
 
-def getTimeMilis(): #will possibly move this func somewhere else, doesnt make much sense here
-    return time.time() * 1000
-
-
 
 
 client.run(token)
