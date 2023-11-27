@@ -8,9 +8,7 @@ import logging
 
 file = '../secrets/bot.env'
 load_dotenv(file)
-#logging.basicConfig(level=logging.INFO)
-#intents = discord.Intents.default()
-#intents.message_content = True
+logging.basicConfig(level=logging.INFO)
 
 
 #TODO:
