@@ -1,8 +1,7 @@
 import discord
 from discord.ext import commands
-
+import time 
 import os
-
 from dotenv import load_dotenv
 import logging
 
@@ -32,6 +31,7 @@ class musicBot(commands.Bot):
 
 client = musicBot()
 
+
 @client.event
 async def on_ready():
     print(f'{client.user} is online')
@@ -46,13 +46,16 @@ async def join(ctx, *, song):
     if ctx.voice_client is not None:
         return await ctx.voice_client.move_to(channel)
     await channel.connect()
-    #await check_voice_activity(ctx, channel)
+    #check for inactivity
+    #next is call streaming function... need to make
 
-async def check_voice_activity(ctx, channel):
-    timeout = 10 * 60 #10 minutes
-    pass
 
-#print(token)
+def getTimeMilis(): #will possibly move this func somewhere else, doesnt make much sense here
+    return time.time() * 1000
+
+
+
+
 client.run(token)
 
 
