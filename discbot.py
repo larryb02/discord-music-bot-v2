@@ -15,6 +15,7 @@ logging.basicConfig(level=logging.INFO)
 #inactivity = leave channel
 #finish play command, probly need some helper functions (get link, stuff like that)
 #add other functionalities i.e. actually play song, pause, skip
+#also fix var naming convention/style need it to all be consistent
 
 
 token = os.getenv('TOKEN')
@@ -31,11 +32,11 @@ client = musicBot()
 
 
 @client.event
-async def on_ready():
+async def onReady():
     print(f'{client.user} is online')
 
 @client.command(name='play')
-async def join(ctx, *, song):
+async def play(ctx, *, song):
     try:
         channel = ctx.author.voice.channel
     except AttributeError:
