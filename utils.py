@@ -6,7 +6,7 @@ import time
 #Resolve link function, i.e. take the query from discord "$play 'my favorite song'" get the link for that query
 #Stream function i.e. stream the source returned from ^
 #Pause...?
-#Queue Function (song queue)
+#Store queue -> probably better to make a class for streaming/management
 
 
 
