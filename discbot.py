@@ -46,7 +46,7 @@ async def play(ctx, *, song):
         return await ctx.voice_client.move_to(channel)
     await channel.connect()
     #check for inactivity
-    #next is call streaming function... need to make
+    #next is call streaming function... need to make -> in utils.py
 
 
 
