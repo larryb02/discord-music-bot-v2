@@ -37,12 +37,18 @@ def resolveLink(query):
     return url
 
 class Queue: 
-    name = ""
     q = []
-
+    
     #create constructor?
 
+    def __init__(self) -> None:
+        pass
+
     def add(song):
-        
+        Queue.q.append(song)    
+
+    def getNext():
+        pass
+    def getList():
         pass
 
