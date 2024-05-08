@@ -4,9 +4,11 @@ import time
 import os
 from dotenv import load_dotenv
 import logging
+import utils
+import os
 
 
-file = '../secrets/bot.env'
+file = './secret.env' #THIS FILE DOESNT EXIST ANYMORE HAHAHAHAHA laptop broke >:(
 load_dotenv(file)
 logging.basicConfig(level=logging.INFO)
 
@@ -32,21 +34,35 @@ client = musicBot()
 
 
 @client.event
-async def onReady():
+async def on_ready():
     print(f'{client.user} is online')
+'''
+play: plays music as queued by users
 
+implementation:
+
+Need a queue to store songs
+Bot streams songs stored in queue
+if queue is empty bot can leave (may add a timer for this)
+'''
 @client.command(name='play')
 async def play(ctx, *, song):
+    songQ = [] #probly gonna make this a class attr or something, so i can use in other places
+    #bot joins user's channel
     try:
         channel = ctx.author.voice.channel
+        print(f"{client.user} is joining {channel}!\n")
+        await (channel.connect(timeout=60.0, reconnect=False) if ctx.voice_client is None else ctx.voice_client.move_to(channel))
     except AttributeError:
-        await ctx.send("You must be in a voice channel to use this command!")
+        await ctx.send(f"You must be in a voice channel to use this command!\ncurrent voice info: {ctx.author.voice}")
         return
-    if ctx.voice_client is not None:
-        return await ctx.voice_client.move_to(channel)
-    await channel.connect()
-    #check for inactivity
-    #next is call streaming function... need to make -> in utils.py
+    #add song to queue
+    songQ.append(song)
+    #streaming has its own caveats that i must handle
+    link = utils.resolveLink(songQ.pop())
+    ctx.send(f'Now Playing {link}')
+    os.sleep(3)
+    await ctx.voice_client.disconnect()
 
 
 

@@ -1,17 +1,14 @@
-import ffmpeg, time, requests, youtube_dl 
+import ffmpeg, time, yt_dlp
 
 #TODO:
-#Resolve link function, i.e. take the query from discord "$play 'my favorite song'" get the link for that query
-#Stream function i.e. stream the source returned from ^
-#Pause...?
-#Store song queue -> probably better to make a class for streaming/management
+# >:)
 
 
-def getTimeMilis(): 
+def getTimeMilis(): #seems uneccessary now
     return time.time() * 1000
 
-def stream(infile, song):
-    infile = resolveLink(song)
+def stream(song):
+    infile = song #just pass the wp_url from resolveLink()
     out, err = (ffmpeg
     .input(infile)
     .output('-', format='s16le', acodec='pcm_s16le', ac=1, ar='16k')
@@ -20,7 +17,7 @@ def stream(infile, song):
     )
     return out, err
 
-def resolveLink(query):
+def resolveLink(query: str): 
     ydl_opts = {
         'format': 'bestaudio/best',
         'postprocessors': [{
@@ -28,27 +25,25 @@ def resolveLink(query):
             'preferredcodec': 'pcm_s16le',
             'preferredquality': '192',
         }],
+        'verbose': True
     }
-
-    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-        info_dict = ydl.extract_info(query, download=False)
-        url = info_dict['url']
+    #need to append ytsearch to strings
+    formattedQuery = f"ytsearch:{query}"
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        results = ydl.extract_info(formattedQuery, download=False)
+    print(f"Webpage URL: {results['entries'][0]['webpage_url']}\n")
+    #parts that i may want:
+    title = results['entries'][0]['title']
+    extractedUrl = results['entries'][0]['webpage_url']
+    returnedUrl = results['entries'][0]['url']
+    info = {
+        'title': title,
+        'extractedUrl': extractedUrl,
+        'returnedUrl': returnedUrl
+    }
+    return info
     
-    return url
 
-class Queue: 
-    q = []
-    
-    #create constructor?
-
-    def __init__(self) -> None:
-        pass
-
-    def add(song):
-        Queue.q.append(song)    
-
-    def getNext():
-        pass
-    def getList():
-        pass
-
+if __name__ == "__main__":
+    song = "BBL Drizzy"
+    resolveLink(song)
