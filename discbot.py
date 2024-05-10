@@ -14,8 +14,7 @@ logging.basicConfig(level=logging.INFO)
 token = os.getenv("TOKEN")
 
 # TODO:
-# inactivity = leave channel
-# add other functionalities: pause, skip
+# add other functionalities: pause, skip, inactivity
 
 
 class musicBot(commands.Bot):
@@ -26,10 +25,9 @@ class musicBot(commands.Bot):
         super().__init__(command_prefix=command_prefix, intents=intents)
         self.Q = list()
 
-    
     async def resolveLink(self, query: str):
         ydl_opts = {
-            "format": "bestaudio/best",
+            "format": "worstaudio/worst",  # since i refuse to download files
             "outtmpl": "%(extractor)s-%(id)s-%(title)s.%(ext)s",
             "restrictfilenames": True,
             "noplaylist": True,
@@ -58,7 +56,7 @@ class musicBot(commands.Bot):
             "readableUrl": extractedUrl,  # readable link
             "streamableUrl": returnedUrl,  # streamable link
         }
-        return info #change this to return a tuple (metadata, FFmpegPCMAudio)
+        return info  # change this to return a tuple (metadata, FFmpegPCMAudio)
 
     """
     joinChannel:
@@ -67,9 +65,7 @@ class musicBot(commands.Bot):
 
     """
 
-    
     async def joinChannel(self, ctx, channel: discord.VoiceChannel):
-        print(f"{client.user} is joining {channel}!\n")
         if ctx.voice_client is not None:
             return await ctx.voice_client.move_to(channel)
         await channel.connect()
@@ -77,19 +73,23 @@ class musicBot(commands.Bot):
     """
     getNext:
 
-    check list if there is another song in list pop and play
+    check for remaining songs and play them
 
     """
 
-    
     async def getNext(self, ctx):
-        if(len(self.Q) > 0):
+        if len(self.Q) > 0:
             ctx.voice_client.stop()
-            cur = self.Q.pop()
+            cur = self.Q.pop(0)  # pop from top
             await self.stream(ctx, cur)
-        
 
-    
+    """
+    stream:
+
+    stream audio output
+
+    """
+
     async def stream(self, ctx, data):
         # can handle opus here
         discord.opus.load_opus(
@@ -105,13 +105,12 @@ class musicBot(commands.Bot):
             )
         await ctx.send(f"Now Playing {data['title']}!\n{data['readableUrl']}")
 
-    
     async def addToQueue(self, ctx, song):
         async with ctx.typing():
             metadata = await self.resolveLink(song)
             self.Q.append(metadata)
-            print([[info['title'], info['readableUrl']] for info in self.Q])
-            await ctx.send(f"{metadata['title']} has been added to queue")
+            print([[song["title"], song["readableUrl"]] for song in self.Q])
+        await ctx.send(f"{metadata['title']} has been added to queue")
 
 
 client = musicBot()
@@ -124,12 +123,6 @@ async def on_ready():
 
 """
     play: plays music as queued by users
-
-    implementation:
-
-    Need a queue to store songs
-    Bot streams songs stored in queue
-    if queue is empty bot can leave (may add a timer for this)
 
 """
 
@@ -147,15 +140,46 @@ async def playSong(ctx, *, song):
         cur = client.Q.pop()
         await client.stream(ctx, cur)
 
+
 """
 leave:
 
-bot leaves channel
+bot leaves channel, need to cut loose ends
 """
+
+
 @client.command(name="leave")
 async def leaveChannel(ctx):
     if ctx.voice_client is not None:
         await ctx.voice_client.disconnect()
 
 
+"""
+pause:
+
+pause current song
+"""
+
+"""
+resume:
+
+"""
+
+"""
+skip:
+
+skips current song
+"""
+
+"""
+list:
+
+list current songs in queue
+"""
+
+"""
+remove:
+
+remove a song from queue
+"""
 client.run(token)
