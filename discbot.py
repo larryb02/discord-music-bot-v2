@@ -82,6 +82,9 @@ class musicBot(commands.Bot):
             ctx.voice_client.stop()
             cur = self.Q.pop(0)  # pop from top
             await self.stream(ctx, cur)
+        else:
+            async with ctx.typing():
+                await ctx.send(f"Queue is empty")
 
     """
     stream:
@@ -150,8 +153,12 @@ bot leaves channel, need to cut loose ends
 
 @client.command(name="leave")
 async def leaveChannel(ctx):
-    if ctx.voice_client is not None:
+    if ctx.voice_client.is_connected():
+        #clear q on disconnect
+        client.Q = list()
         await ctx.voice_client.disconnect()
+    else:
+        ctx.send(f"I am currently not in a channel!")
 
 
 """
@@ -159,27 +166,55 @@ pause:
 
 pause current song
 """
-
+@client.command(name="pause")
+async def pauseAudio(ctx):
+    #only if audio is currently being played
+    if ctx.voice_client.is_playing():
+        ctx.voice_client.pause()
+    else:
+        async with ctx.typing():
+            await ctx.send(f"Audio is already paused!!!")
+    
 """
 resume:
 
 """
-
+@client.command(name="resume")
+async def resumeAudio(ctx):
+    if ctx.voice_client.is_paused():
+        ctx.voice_client.resume()
+    else:
+        async with ctx.typing():
+            await ctx.send(f"Audio is playing!!!")
+            
 """
 skip:
 
 skips current song
 """
-
+@client.command(name="skip")
+async def skipSong(ctx):
+    #stop output
+    #getNext...
+    async with ctx.typing():
+        await ctx.send(f"Skipping Current Song") #be more specific later
+        ctx.voice_client.stop()
+    await client.getNext(ctx)
 """
 list:
 
 list current songs in queue
 """
-
+# @client.command(name="queue")
+# async def printQueue(): #once i figure out how to make this look nice ill write
+#     pass
 """
 remove:
 
-remove a song from queue
+remove a song from queue based on index
 """
+@client.command(name="remove")
+async def removeSong(ctx, index):
+    #probably need to create a prompt showing the list
+    pass
 client.run(token)
