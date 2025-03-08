@@ -1,7 +1,10 @@
 # discord-music-bot-v2
+Discord Music Bot ... streams music from youtube
 
-My second attempt at this, goal is to get more python experience and more practice using API's.
-This will be a music bot that grabs music from youtube to stream in a discord channel.
+# Plans
+- Gonna do some refactoring... separation of concerns
+- Turning into a cog in case i have a new idea I'd like to add
+- Extending music bot
 
 # dependencies
 - discord.py
